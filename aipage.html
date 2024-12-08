@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Story Builder</title>
+    <title>Seal Game</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -11,197 +11,267 @@
             color: white;
             text-align: center;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            transform: translateY(-65px);
         }
-        #story-container {
-            margin: auto;
-            max-width: 600px;
-            border: 2px solid white;
-            border-radius: 10px;
-            padding: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+
+        h1 {
+            margin-bottom: 0px;
+            font-size: 2.5rem; 
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            text-transform: uppercase;
         }
-        .choice {
-            display: block;
-            margin: 10px auto;
-            padding: 10px 20px;
-            background-color: #4caf50;
-            color: white;
+
+        h1 s {
+            color: #ff6f61;
+            text-decoration: line-through;
+            font-weight: bold;
+        }
+
+        .audio-message {
+            font-size: 1rem;
+            color: #ff6f61;
+            margin-bottom: 15px;
+            font-weight:bolder;
+        }
+
+        canvas {
+            background-color: #1f1f1f;
+            border: 3px solid #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+            transition: box-shadow 0.3s ease;
+        }
+
+        canvas:hover {
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+        }
+
+        #playButton {
+            padding: 16px 30px;
+            background: linear-gradient(145deg, #ff6f61, #d83a3a);
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: background 0.3s;
-        }
-        .choice:hover {
-            background-color: #45a049;
-        }
-        #credits {
-            font-size: 10px;
-            color: #cccccc;
-            margin-top: 20px;
-        }
-        #play-button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #007bff;
             color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
             font-size: 18px;
+            cursor: pointer;
+            border-radius: 18px;
+            margin-top: 20px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: absolute;
+            bottom: 130px;
+            font-weight: bold;
         }
-        #play-button:hover {
-            background-color: #0056b3;
+
+        #playButton:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        #playButton:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        #playButton:active {
+            transform: translateY(2px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
 <body>
-    <h1>Interactive Story Builder</h1>
-    <audio id="background-music" loop>
-        <source src="audio/inspirational-calm-emotional-272593.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
+    <audio src="audio/inspirational-calm-emotional-272593.mp3" autoplay loop>
+        <p>If you are reading this, it is because your browser does not support the audio element.</p>
     </audio>
-    <button id="play-button">Play Background Music</button>
-    <div id="story-container">
-        <p id="story-text">You wake up in a mysterious forest. The air is crisp, and you hear the distant sound of water. Ahead, there's a narrow path and a dense thicket.</p>
-        <button class="choice" onclick="makeChoice('path')">Take the path</button>
-        <button class="choice" onclick="makeChoice('thicket')">Enter the thicket</button>
-    </div>
-    <div id="credits">Credits to "Huynhhoa89" for the royalty free soundtrack.</div>
 
+    <h1><s>Snake</s> Seal Game!</h1>
+    <p class="audio-message">Please enable audio autoplay in the top of your browser for calming, royalty-free piano!</p>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    <button id="playButton">Play</button>
+    
     <script>
-        const story = {
-            start: {
-                text: "You wake up in a mysterious forest. The air is crisp, and you hear the distant sound of water. Ahead, there's a narrow path and a dense thicket.",
-                choices: {
-                    path: "path",
-                    thicket: "thicket"
-                }
-            },
-            path: {
-                text: "You walk along the path and discover an abandoned cabin. The door is slightly ajar. Do you enter?",
-                choices: {
-                    enter: "cabin",
-                    leave: "bridge"
-                }
-            },
-            thicket: {
-                text: "You push through the thicket and find a hidden cave. The entrance looks dark and foreboding. Do you go inside?",
-                choices: {
-                    inside: "cave",
-                    avoid: "stream"
-                }
-            },
-            cabin: {
-                text: "Inside, you find a dusty journal containing secrets of the forest. The journal mentions a cursed treasure buried under an ancient oak guarded by a riddle. Do you search for the oak tree?",
-                choices: {
-                    search: "riddle",
-                    leave: "bridge"
-                }
-            },
-            cave: {
-                text: "You find glowing crystals and strange markings on the walls. A faint whisper echoes, urging you to explore deeper. Do you heed the whisper or leave?",
-                choices: {
-                    deeper: "lake",
-                    leave: "stream"
-                }
-            },
-            stream: {
-                text: "You find a peaceful stream with sparkling water. While resting, you notice a map carved into a rock showing the location of an ancient oak tree. Do you follow the map?",
-                choices: {
-                    follow: "riddle",
-                    stay: "peacefulEnd"
-                }
-            },
-            bridge: {
-                text: "You continue along the path and reach a rickety wooden bridge over a deep ravine. As you step onto the bridge, it creaks loudly. Do you cross or turn back?",
-                choices: {
-                    cross: "lake",
-                    back: "start"
-                }
-            },
-            lake: {
-                text: "You arrive at a shimmering lake with an island in the center. A small boat is tied to the shore, but the water glows unnaturally. Do you take the boat or walk around the lake?",
-                choices: {
-                    boat: "island",
-                    walk: "oakTree"
-                }
-            },
-            riddle: {
-                text: "At the ancient oak, you find a pedestal with a riddle: 'I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?' Do you answer or leave?",
-                choices: {
-                    answer: "treasure",
-                    leave: "lake"
-                }
-            },
-            island: {
-                text: "On the island, you find an altar with the same riddle as the oak tree. Solving it reveals the treasure, but strange shadows move in the water. Do you take the treasure or flee?",
-                choices: {
-                    take: "treasure",
-                    flee: "peacefulEnd"
-                }
-            },
-            oakTree: {
-                text: "You find the ancient oak and dig beneath its roots, uncovering a hidden passage. Inside, you find the treasure chest and a strange artifact that grants wisdom and courage.",
-                choices: {}
-            },
-            treasure: {
-                text: "You solve the riddle ('an echo') and uncover a chest filled with gold and a magical artifact. Your courage and wits have led you to triumph!",
-                choices: {}
-            },
-            peacefulEnd: {
-                text: "You decide to leave the mysteries behind and live a peaceful life, forever wondering what could have been.",
-                choices: {}
-            }
-        };
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const playButton = document.getElementById('playButton');
+        const toggleInstructionsButton = document.getElementById('toggleInstructionsButton');
+        const instructions = document.getElementById('instructions');
 
-        let currentScene = "start";
+        const gridSize = 20; 
+        const canvasSizeX = 600; 
+        const canvasSizeY = 400; 
+        const snakeColor = '#8c8c8c'; // Seal-like color
 
-        function makeChoice(choice) {
-            const nextScene = story[currentScene].choices[choice];
-            if (!nextScene) {
-                document.getElementById("story-container").innerHTML = `
-                    <p>${story[currentScene].text}</p>
-                    <button class="choice" onclick="restart()">Restart</button>
-                `;
-                return;
-            }
+        // Food colors array (green shade, fishy-blue, fishy-red)
+        const foodColors = ['#4caf50', '#4c8a8a', '#ff4c4c'];
+        let foodColorIndex = 0; // Start with the first color in the array
 
-            currentScene = nextScene;
-            updateStory();
+        let snake = [{ x: 160, y: 160, head: true }, { x: 140, y: 160 }, { x: 120, y: 160 }];
+        let food = { x: 0, y: 0 };
+        let direction = 'RIGHT';
+        let gameInterval;
+
+        function startGame() {
+            spawnFood();
+            document.addEventListener('keydown', changeDirection);
+            gameInterval = setInterval(gameLoop, 100);
+            playButton.disabled = true;
         }
 
-        function updateStory() {
-            const scene = story[currentScene];
-            document.getElementById("story-container").innerHTML = `<p>${scene.text}</p>`;
-
-            for (let [key, value] of Object.entries(scene.choices)) {
-                const btn = document.createElement("button");
-                btn.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-                btn.className = "choice";
-                btn.onclick = () => makeChoice(key);
-                document.getElementById("story-container").appendChild(btn);
-            }
-        }
-
-        function restart() {
-            currentScene = "start";
-            updateStory();
-        }
-
-        // Play button to start the background music
-        document.getElementById("play-button").addEventListener("click", () => {
-            const music = document.getElementById('background-music');
-            music.play().catch(err => {
-                console.error("Playback error:", err);
-                alert("Unable to play the music. Please check browser permissions.");
-            });
+        playButton.addEventListener('click', function() {
+            playButton.style.display = 'none'; 
+            startGame();
         });
 
-        // Initialize the story
-        updateStory();
+        toggleInstructionsButton.addEventListener('click', function() {
+            if (instructions.style.display === 'none' || instructions.style.display === '') {
+                instructions.style.display = 'block';
+                toggleInstructionsButton.textContent = 'Hide Instructions';
+            } else {
+                instructions.style.display = 'none';
+                toggleInstructionsButton.textContent = 'Show Instructions';
+            }
+        });
+
+        function gameLoop() {
+            moveSnake();
+            if (checkCollisions()) {
+                endGame();
+                return;
+            }
+            if (eatFood()) {
+                growSnake();
+                spawnFood();
+                changeFoodColor(); // Change food color when eaten
+            }
+            draw();
+        }
+
+        function moveSnake() {
+            const head = { ...snake[0] };
+
+            switch (direction) {
+                case 'UP': head.y -= gridSize; break;
+                case 'DOWN': head.y += gridSize; break;
+                case 'LEFT': head.x -= gridSize; break;
+                case 'RIGHT': head.x += gridSize; break;
+            }
+
+            snake.unshift(head);
+            snake.pop();
+        }
+
+        function changeDirection(event) {
+            switch (event.key) {
+                case 'ArrowUp': if (direction !== 'DOWN') direction = 'UP'; break;
+                case 'ArrowDown': if (direction !== 'UP') direction = 'DOWN'; break;
+                case 'ArrowLeft': if (direction !== 'RIGHT') direction = 'LEFT'; break;
+                case 'ArrowRight': if (direction !== 'LEFT') direction = 'RIGHT'; break;
+            }
+        }
+
+        function checkCollisions() {
+            const head = snake[0];
+
+            if (head.x < 0 || head.x >= canvasSizeX || head.y < 0 || head.y >= canvasSizeY) {
+                return true;
+            }
+
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function eatFood() {
+            const head = snake[0];
+            return head.x === food.x && head.y === food.y;
+        }
+
+        function growSnake() {
+            snake.push({});
+        }
+
+        function spawnFood() {
+            food.x = Math.floor(Math.random() * (canvasSizeX / gridSize)) * gridSize;
+            food.y = Math.floor(Math.random() * (canvasSizeY / gridSize)) * gridSize;
+        }
+
+        function changeFoodColor() {
+            foodColorIndex = (foodColorIndex + 1) % foodColors.length; // Cycle through colors
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvasSizeX, canvasSizeY);
+
+            // Draw snake body
+            for (let i = 0; i < snake.length; i++) {
+                const segment = snake[i];
+
+                // Draw head with face
+                if (i === 0) {
+                    ctx.fillStyle = '#8c8c8c'; // Seal color for head
+                    ctx.beginPath();
+                    ctx.arc(segment.x + gridSize / 2, segment.y + gridSize / 2, gridSize / 2, 0, Math.PI * 2); // Head
+                    ctx.fill();
+                    ctx.fillStyle = 'black'; // Eyes color
+                    ctx.beginPath();
+                    ctx.arc(segment.x + gridSize / 3, segment.y + gridSize / 3, 3, 0, Math.PI * 2); // Left eye
+                    ctx.arc(segment.x + 2 * gridSize / 3, segment.y + gridSize / 3, 3, 0, Math.PI * 2); // Right eye
+                    ctx.fill();
+                } else {
+                    // Draw body segments
+                    ctx.fillStyle = snakeColor;
+                    ctx.beginPath();
+                    ctx.ellipse(segment.x + gridSize / 2, segment.y + gridSize / 2, gridSize / 1.5, gridSize / 2, 0, 0, Math.PI * 2); // Body
+                    ctx.fill();
+                }
+            }
+
+            // Draw food (fish)
+            ctx.fillStyle = foodColors[foodColorIndex]; // Get the current food color
+            ctx.beginPath();
+            ctx.ellipse(food.x + gridSize / 2, food.y + gridSize / 2, gridSize / 1.5, gridSize / 2, 0, 0, Math.PI * 2); // Fish body
+            ctx.fill();
+
+            // Draw fish tail
+            ctx.fillStyle = foodColors[foodColorIndex]; // Same color for the tail
+            ctx.beginPath();
+            ctx.moveTo(food.x + gridSize / 1.5, food.y + gridSize / 2); 
+            ctx.lineTo(food.x + gridSize, food.y + gridSize / 4); 
+            ctx.lineTo(food.x + gridSize, food.y + 3 * gridSize / 4);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw fish eye (a small dot)
+            ctx.fillStyle = 'black'; 
+            ctx.beginPath();
+            ctx.arc(food.x + gridSize / 2, food.y + gridSize / 3, 3, 0, Math.PI * 2); // Eye
+            ctx.fill();
+        }
+
+        function endGame() {
+            clearInterval(gameInterval);
+            alert('Game Over! Press OK to restart.');
+            resetGame();
+        }
+
+        function resetGame() {
+            snake = [{ x: 160, y: 160, head: true }, { x: 140, y: 160 }, { x: 120, y: 160 }];
+            direction = 'RIGHT';
+            playButton.style.display = 'inline-block'; 
+            playButton.disabled = false; 
+        }
     </script>
 </body>
 </html>
