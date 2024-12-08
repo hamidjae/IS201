@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Story Builder</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(90deg, #2b1055, #7597de);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        #story-container {
+            margin: auto;
+            max-width: 600px;
+            border: 2px solid white;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+        .choice {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        .choice:hover {
+            background-color: #45a049;
+        }
+        #credits {
+            font-size: 10px;
+            color: #cccccc;
+            margin-top: 20px;
+        }
+        #play-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        #play-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Story Builder</h1>
+    <audio id="background-music" loop>
+        <source src="inspirational-calm-emotional-272593.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <button id="play-button">Play Background Music</button>
+    <div id="story-container">
+        <p id="story-text">You wake up in a mysterious forest. The air is crisp, and you hear the distant sound of water. Ahead, there's a narrow path and a dense thicket.</p>
+        <button class="choice" onclick="makeChoice('path')">Take the path</button>
+        <button class="choice" onclick="makeChoice('thicket')">Enter the thicket</button>
+    </div>
+    <div id="credits">Credits to "Huynhhoa89" for the royalty free soundtrack.</div>
+
+    <script>
+        const story = {
+            start: {
+                text: "You wake up in a mysterious forest. The air is crisp, and you hear the distant sound of water. Ahead, there's a narrow path and a dense thicket.",
+                choices: {
+                    path: "path",
+                    thicket: "thicket"
+                }
+            },
+            path: {
+                text: "You walk along the path and discover an abandoned cabin. The door is slightly ajar. Do you enter?",
+                choices: {
+                    enter: "cabin",
+                    leave: "bridge"
+                }
+            },
+            thicket: {
+                text: "You push through the thicket and find a hidden cave. The entrance looks dark and foreboding. Do you go inside?",
+                choices: {
+                    inside: "cave",
+                    avoid: "stream"
+                }
+            },
+            cabin: {
+                text: "Inside, you find a dusty journal containing secrets of the forest. The journal mentions a cursed treasure buried under an ancient oak guarded by a riddle. Do you search for the oak tree?",
+                choices: {
+                    search: "riddle",
+                    leave: "bridge"
+                }
+            },
+            cave: {
+                text: "You find glowing crystals and strange markings on the walls. A faint whisper echoes, urging you to explore deeper. Do you heed the whisper or leave?",
+                choices: {
+                    deeper: "lake",
+                    leave: "stream"
+                }
+            },
+            stream: {
+                text: "You find a peaceful stream with sparkling water. While resting, you notice a map carved into a rock showing the location of an ancient oak tree. Do you follow the map?",
+                choices: {
+                    follow: "riddle",
+                    stay: "peacefulEnd"
+                }
+            },
+            bridge: {
+                text: "You continue along the path and reach a rickety wooden bridge over a deep ravine. As you step onto the bridge, it creaks loudly. Do you cross or turn back?",
+                choices: {
+                    cross: "lake",
+                    back: "start"
+                }
+            },
+            lake: {
+                text: "You arrive at a shimmering lake with an island in the center. A small boat is tied to the shore, but the water glows unnaturally. Do you take the boat or walk around the lake?",
+                choices: {
+                    boat: "island",
+                    walk: "oakTree"
+                }
+            },
+            riddle: {
+                text: "At the ancient oak, you find a pedestal with a riddle: 'I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?' Do you answer or leave?",
+                choices: {
+                    answer: "treasure",
+                    leave: "lake"
+                }
+            },
+            island: {
+                text: "On the island, you find an altar with the same riddle as the oak tree. Solving it reveals the treasure, but strange shadows move in the water. Do you take the treasure or flee?",
+                choices: {
+                    take: "treasure",
+                    flee: "peacefulEnd"
+                }
+            },
+            oakTree: {
+                text: "You find the ancient oak and dig beneath its roots, uncovering a hidden passage. Inside, you find the treasure chest and a strange artifact that grants wisdom and courage.",
+                choices: {}
+            },
+            treasure: {
+                text: "You solve the riddle ('an echo') and uncover a chest filled with gold and a magical artifact. Your courage and wits have led you to triumph!",
+                choices: {}
+            },
+            peacefulEnd: {
+                text: "You decide to leave the mysteries behind and live a peaceful life, forever wondering what could have been.",
+                choices: {}
+            }
+        };
+
+        let currentScene = "start";
+
+        function makeChoice(choice) {
+            const nextScene = story[currentScene].choices[choice];
+            if (!nextScene) {
+                document.getElementById("story-container").innerHTML = `
+                    <p>${story[currentScene].text}</p>
+                    <button class="choice" onclick="restart()">Restart</button>
+                `;
+                return;
+            }
+
+            currentScene = nextScene;
+            updateStory();
+        }
+
+        function updateStory() {
+            const scene = story[currentScene];
+            document.getElementById("story-container").innerHTML = `<p>${scene.text}</p>`;
+
+            for (let [key, value] of Object.entries(scene.choices)) {
+                const btn = document.createElement("button");
+                btn.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+                btn.className = "choice";
+                btn.onclick = () => makeChoice(key);
+                document.getElementById("story-container").appendChild(btn);
+            }
+        }
+
+        function restart() {
+            currentScene = "start";
+            updateStory();
+        }
+
+        // Play button to start the background music
+        document.getElementById("play-button").addEventListener("click", () => {
+            const music = document.getElementById('background-music');
+            music.play().catch(err => {
+                console.error("Playback error:", err);
+                alert("Unable to play the music. Please check browser permissions.");
+            });
+        });
+
+        // Initialize the story
+        updateStory();
+    </script>
+</body>
+</html>
