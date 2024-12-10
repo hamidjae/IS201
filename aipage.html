@@ -85,9 +85,213 @@
             transform: translateY(2px);
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
         }
+        /* Sidebar */
+        .sidebar {
+    position: absolute;
+    left: 0;
+    top: 55px;
+    width: 250px;
+    height: 100%;
+    background: #1f1f1f;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+}
+
+.sidebar.hidden {
+    transform: translateX(-100%);
+}
+
+.sidebar h2 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.sidebar ul {
+    padding-left: 20px;
+}
+
+.sidebar li {
+    margin: 10px 0;
+}
+
+/* Toggle Button */
+.toggle-sidebar {
+    position: absolute;
+    top: 80px;
+    left: 300px; /* Adjusted initial position so that it doesn't clip */
+    background: #ff6f61;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.toggle-sidebar:hover {
+    background: #d83a3a;
+}
+
+.toggle-sidebar:active {
+    transform: translateY(2px);
+}
+/* Divider Style */
+.divider {
+    width: 128%;
+    height: 2px;  /* The thickness of the divider */
+    background: linear-gradient(90deg, #ff6f61, #d83a3a); /* Gradient from red to pink */
+    margin: 20px 0; /* Adds spacing above and below the divider */
+    margin-left: -50px;  /* Moves the divider to the left */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); /* Adds some shadow for depth */
+    border-radius: 10px; /* Optional: Rounded edges for a smooth look */
+}
+/* Sidebar */
+.sidebar {
+            position: absolute;
+            left: 0;
+            top: 55px;
+            width: 250px;
+            height: 100%;
+            background: #1f1f1f;
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            transform: translateX(0);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            text-align: center;
+            color: #ff6f61;
+        }
+
+        .sidebar ul {
+            padding-left: 20px;
+        }
+
+        .sidebar li {
+            margin: 10px 0;
+        }
+
+        /* Table of Contents Style */
+        .toc-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #ff6f61;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .toc-item {
+            list-style: none;
+            padding: 8px;
+            margin: 10px 0;
+            background: linear-gradient(145deg, #ff6f61, #d83a3a);
+            border-radius: 10px;
+            font-size: 1.2rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 80%;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .toc-item:hover {
+            background: linear-gradient(145deg, #d83a3a, #ff6f61);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .toc-item:active {
+            transform: translateY(2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .toc-item a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    display: block;  /* Ensures the anchor tag fills the entire space of the button */
+    padding: 1px;  /* Optional: Add padding to ensure the clickable area has some space */
+    width: 100%;  /* Make sure the link fills the entire button */
+    padding-left: 0px;
+}
+
+        /* Toggle Button */
+        .toggle-sidebar {
+    position: absolute;
+    top: 80px;
+    left: 300px; /* Adjusted initial position */
+    background: #ff6f61;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.25s ease; /* Default transition speed for closing */
+}
+
+.sidebar.hidden + .toggle-sidebar {
+    left: 50px; /* Adjusted to suit the new position when the sidebar is hidden */
+    transition: all 1s ease; /* Slower transition for closing */
+}
+
+.toggle-sidebar:hover {
+    background: #d83a3a;
+}
+
+.toggle-sidebar:active {
+    transform: translateY(2px);
+}
+
+
+        /* Divider Style */
+        .divider {
+            width: 128%;
+            height: 2px;  /* The thickness of the divider */
+            background: linear-gradient(90deg, #ff6f61, #d83a3a); /* Gradient from red to pink */
+            margin: 20px 0; /* Adds spacing above and below the divider */
+            margin-left: -50px;  /* Moves the divider to the left */
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); /* Adds some shadow for depth */
+            border-radius: 10px; /* Optional: Rounded edges for a smooth look */
+        }
     </style>
 </head>
 <body>
+    <div class="sidebar" id="sidebar">
+        <h2>Table of Contents</h2>
+        <ul>
+            <ul class="toc-item"><a href="landingpage.html">Dashboard</a></ul>
+            <ul class="toc-item"><a href="resume.html">Resume</a></ul>
+            <ul class="toc-item"><a href="#">Seal Game!</a></ul>
+        </ul>
+        <div class="divider"></div>
+        <h2>Instructions</h2>
+        <div class="divider"></div>
+        <p>Welcome to Seal Game! Guide your seal to eat krill & fish to grow! Avoid crashing into walls or yourself.</p>
+        <ul>
+            <li>Use Arrow Keys to move.</li>
+            <li>Eat the krill and fish to grow.</li>
+            <li>Don't hit the walls or yourself!</li>
+            <li>Enjoy the music!</li>
+        </ul>
+    </div>
+
+    
+
+    <button class="toggle-sidebar" id="toggleSidebar">Hide Sidebar</button>
+    
     <audio src="assets/audio/inspirational-calm-emotional-272593.mp3" autoplay loop>
         <p>If you are reading this, it is because your browser does not support the audio element.</p>
     </audio>
@@ -101,8 +305,8 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const playButton = document.getElementById('playButton');
-        const toggleInstructionsButton = document.getElementById('toggleInstructionsButton');
-        const instructions = document.getElementById('instructions');
+        const toggleSidebarButton = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
 
         const gridSize = 20; 
         const canvasSizeX = 600; 
@@ -128,16 +332,6 @@
         playButton.addEventListener('click', function() {
             playButton.style.display = 'none'; 
             startGame();
-        });
-
-        toggleInstructionsButton.addEventListener('click', function() {
-            if (instructions.style.display === 'none' || instructions.style.display === '') {
-                instructions.style.display = 'block';
-                toggleInstructionsButton.textContent = 'Hide Instructions';
-            } else {
-                instructions.style.display = 'none';
-                toggleInstructionsButton.textContent = 'Show Instructions';
-            }
         });
 
         function gameLoop() {
@@ -262,7 +456,7 @@
 
         function endGame() {
             clearInterval(gameInterval);
-            alert('Game Over! Press OK to restart.');
+            alert('Your seal got stuck! Press OK to restart!');
             resetGame();
         }
 
@@ -272,6 +466,19 @@
             playButton.style.display = 'inline-block'; 
             playButton.disabled = false; 
         }
+
+        // Sidebar Toggle Event Listener
+toggleSidebarButton.addEventListener('click', function() {
+    if (sidebar.classList.contains('hidden')) {
+        sidebar.classList.remove('hidden');
+        toggleSidebarButton.textContent = 'Hide Sidebar';
+        toggleSidebarButton.style.left = '300px'; // Move the button accordingly when sidebar is open
+    } else {
+        sidebar.classList.add('hidden');
+        toggleSidebarButton.textContent = 'Show Sidebar';
+        toggleSidebarButton.style.left = '10px'; // Move button back when sidebar is hidden
+    }
+});
     </script>
 </body>
 </html>
